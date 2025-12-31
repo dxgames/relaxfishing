@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Relax Fishing</title>
+
+<meta property="og:title" content="Relax Fishing - DX GAMES">
+<meta property="og:description" content="¡Relájate pescando en este simulador tranquilo! 🎣">
+<meta property="og:image" content="https://i.postimg.cc/nVPfcJFB/previsualizacion.jpg">
+<meta property="og:type" content="website">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://i.postimg.cc/nVPfcJFB/previsualizacion.jpg">
+
+<link rel="apple-touch-icon" href="https://i.postimg.cc/XvSVN0gT/icono.png"> 
+<link rel="icon" type="image/png" href="https://i.postimg.cc/XvSVN0gT/icono.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+  user-select: none;
+  font-family: 'Fredoka', sans-serif;
+  -webkit-tap-highlight-color: transparent; /* Quita el brillo azul al tocar en móviles */
+}
+
+canvas {
+  display: block;
+  background-image: url("https://i.postimg.cc/mDq0KMyw/aguaanimada.gif");
+  background-size: cover;
+  background-position: center;
+}
+
+/* ---------- MENU Y BOTONES GENERALES ---------- */
+#menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  color: white;
+}
+
+#titleImage {
+  width: 320px;
+  max-width: 80%;
+  margin-bottom: 30px;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.6));
+}
+
+.menu-button {
+  font-size: 20px; 
+  padding: 12px 34px; 
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 12px; 
+  min-width: 250px;
+  text-align: center;
+}
+
+#playBtn {
+  background: linear-gradient(135deg, #2ecc71, #1abc9c);
+  color: #063b2a;
+  box-shadow: 0 6px 0 #0e6655;
+  font-size: 26px;
+  padding: 16px 44px;
+}
+
+#playBtn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #0e6655;
+}
+
+.option-button {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: #0d2838;
+  box-shadow: 0 4px 0 #1f648d;
+}
+.option-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #1f648d;
+}
+
+#muteBtn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid #333;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 38px;
+    cursor: pointer;
+    z-index: 11;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #e74c3c;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    color: white;
+    line-height: 28px;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    border: 2px solid #c0392b;
+}
+
+/* ---------- MODALES ---------- */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none; 
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    padding: 20px;
+}
+
+.modal-content {
+    background: #ecf0f1;
+    color: #2c3e50;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    position: relative;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: #2980b9;
+    font-size: 24px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #bdc3c7;
+}
+
+.setting-btn {
+    padding: 5px 15px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+
+<div id="menu">
+  <img 
+  src="https://i.postimg.cc/FK59FQxn/titulo.png" 
+  alt="Relax Fishing"
+  id="titleImage"
+/>
+  <button id="playBtn" class="menu-button">¡A PEZCAR!</button>
+  <button id="settingsBtn" class="menu-button option-button">Ajustes</button> 
+  <button id="howToPlayBtn" class="menu-button option-button">¿Cómo Jugar?</button>
+  <button id="aboutBtn" class="menu-button option-button">Acerca de</button>
+</div>
+
+<div id="muteBtn">🔊</div>
+
+<canvas id="game"></canvas>
+
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="document.getElementById('settingsModal').style.display='none';">X</button>
+        <h3>⚙️ Ajustes</h3>
+        <div class="setting-item">
+            <span>Sonido (SFX)</span>
+            <button id="toggleSfxBtn" class="setting-btn">ENCENDIDO</button>
+        </div>
+        <div class="setting-item">
+            <span>Ambiente (BGM)</span>
+            <button id="toggleBgmBtn" class="setting-btn">ENCENDIDO</button>
+        </div>
+    </div>
+</div>
+
+<div id="howToPlayModal" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="document.getElementById('howToPlayModal').style.display='none';">X</button>
+        <h3>🎣 ¿Cómo Jugar?</h3>
+        <p>¡Bienvenido a una experiencia relajante en este simulador de pesca!</p>
+        <p>Para comenzar a pescar toca la pantalla en la dirección en la que quieres lanzar el sedal y mantenla presionada para controlar la fuerza del lanzamiento. Cuando lances el sedal espera a que un pez pique el anzuelo.</p>
+        <p>Cuando pique, toca la pantalla, luego toca las veces necesarias en la **zona color verde** de la barra que aparece en la parte superior hasta capturar al pez. ¡Si tocas la zona roja el pez escapará!</p>
+        <p>¡Diviértete!</p>
+    </div>
+</div>
+
+<div id="aboutModal" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="document.getElementById('aboutModal').style.display='none';">X</button>
+        <h3>ℹ️ Acerca de Relax Fishing</h3>
+        <p>Creado por DX GAMES</p>
+        <p>Versión: v1.0 Final</p>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const menu = document.getElementById("menu");
+const muteBtn = document.getElementById("muteBtn");
+
+// ELEMENTOS DE MENÚ
+const settingsBtn = document.getElementById("settingsBtn");
+const toggleSfxBtn = document.getElementById("toggleSfxBtn");
+const toggleBgmBtn = document.getElementById("toggleBgmBtn");
+const howToPlayBtn = document.getElementById("howToPlayBtn");
+const aboutBtn = document.getElementById("aboutBtn");
+
+const settingsModal = document.getElementById("settingsModal");
+const howToPlayModal = document.getElementById("howToPlayModal");
+const aboutModal = document.getElementById("aboutModal");
+
+// Variables globales
+let assetsLoaded = false;
+let imagesToLoad = 0;
+let imagesLoaded = 0;
+let isLooping = false; 
+
+function resize(){
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+// ---------- UTIL ----------
+function img(src){ 
+    imagesToLoad++;
+    const i=new Image(); 
+    i.onload = () => {
+        imagesLoaded++;
+        checkAssetsLoading();
+    };
+    i.onerror = () => {
+        console.error(`Error al cargar imagen: ${src}`);
+        imagesLoaded++;
+        checkAssetsLoading();
+    }
+    i.src=src; 
+    return i; 
+}
+
+function checkAssetsLoading() {
+    if (imagesLoaded >= imagesToLoad && !assetsLoaded) {
+        assetsLoaded = true;
+        spawnInitial();
+        loop(); 
+    }
+}
+
+// ---------- AUDIO ----------
+const audioBGM = new Audio("https://archive.org/download/agua-de-rio-fluyendo/Agua%20de%20R%C3%ADo%20Fluyendo.mp3");
+audioBGM.loop = true;
+audioBGM.volume = 0.5;
+
+let audioReel = null; 
+
+const sfx = {
+    cast: "https://archive.org/download/efecto-de-sonido-de-cana-de-pescar/Efecto%20de%20sonido%20de%20Ca%C3%b1a%20de%20pescar.mp3",
+    bite: "https://archive.org/download/sonido-de-chapoteo-con-roca-en-el-lago-efecto-de-sonido-hd/Sonido%20de%20Chapoteo%20con%20Roca%20en%20el%20lago%20%20Efecto%20de%20Sonido%20HD.mp3",
+    escape: "https://archive.org/download/water-splash-sound-effect-free-clip-sounds-ambient-sounds/Water%20Splash%20Sound%20Effect%20%20Free%20Clip%20Sounds%20%20Ambient%20Sounds.mp3"
+};
+
+let isMuted = false;
+let isBgmOn = true; 
+let isSfxOn = true;
+
+function updateSfxButtonText() {
+    toggleSfxBtn.textContent = isSfxOn ? "ENCENDIDO" : "APAGADO";
+}
+
+function updateBgmButtonText() {
+    toggleBgmBtn.textContent = isBgmOn ? "ENCENDIDO" : "APAGADO";
+}
+
+function playSound(key) {
+    if (isMuted || !isSfxOn) return; 
+    const audio = new Audio(sfx[key]);
+    audio.volume = 1.0;
+    audio.load(); 
+    audio.play().catch(e => console.error(`Error al reproducir sonido ${key}:`, e));
+}
+
+function stopReelSound() {
+    if (audioReel) {
+        audioReel.pause();
+        audioReel = null; 
+    }
+}
+
+muteBtn.onclick = () => {
+    isMuted = !isMuted;
+    if (isMuted) {
+        audioBGM.pause();
+        stopReelSound();
+        muteBtn.textContent = "🔇";
+        isBgmOn = false;
+        isSfxOn = false;
+        updateBgmButtonText();
+        updateSfxButtonText();
+    } else {
+        isBgmOn = true; 
+        isSfxOn = true; 
+        audioBGM.play().catch(e => {
+            console.warn("Autoplay bloqueado.");
+        });
+        muteBtn.textContent = "🔊";
+        updateBgmButtonText();
+        updateSfxButtonText();
+    }
+};
+
+updateSfxButtonText();
+updateBgmButtonText();
+
+settingsBtn.onclick = () => { settingsModal.style.display = 'flex'; };
+
+toggleBgmBtn.onclick = () => {
+    if (isMuted) return; 
+    isBgmOn = !isBgmOn;
+    updateBgmButtonText();
+    if (isBgmOn) audioBGM.play().catch(e => console.warn("BGM requiere interacción."));
+    else audioBGM.pause();
+};
+
+toggleSfxBtn.onclick = () => {
+    if (isMuted) return; 
+    isSfxOn = !isSfxOn;
+    updateSfxButtonText();
+    if (!isSfxOn) stopReelSound();
+};
+
+howToPlayBtn.onclick = () => { howToPlayModal.style.display = 'flex'; };
+aboutBtn.onclick = () => { aboutModal.style.display = 'flex'; };
+
+
+// ---------- SPRITES ----------
+const rodSprite = img("https://i.postimg.cc/vHgJjVtz/caña.png");
+
+const fishSprites = {
+  miraIzquierda: {
+    small:[
+      img("https://i.postimg.cc/BbtdVt03/pezchico2.png"),
+      img("https://i.postimg.cc/NMd3DmZS/pezchico3.png"),
+      img("https://i.postimg.cc/d15b6rzD/pezchico4.png"),
+      img("https://i.postimg.cc/6qTDmTXw/pezchico5.png")
+    ],
+    medium:[
+      img("https://i.postimg.cc/Jn061g2V/pezmediano1.png"),
+      img("https://i.postimg.cc/MTHPW4rr/pezmediano2.png"),
+      img("https://i.postimg.cc/KzjqZVsW/pezmediano3.png"),
+      img("https://i.postimg.cc/ZRn7TgMh/pezmediano4.png")
+    ],
+    heavy:[
+      img("https://i.postimg.cc/GpyPqCVs/pezgrande1.png"),
+      img("https://i.postimg.cc/cJn7XS2t/pezgrande2.png")
+    ]
+  },
+  miraDerecha: {
+    small:[
+      img("https://i.postimg.cc/6qTDmTXG/pezchico1.png")
+    ],
+    medium:[], 
+    heavy:[] 
+  }
+};
+
+const rarities = {
+  small:{speed:0.0025,hits:3,chance:0.5,size:52, greenW: 0.4, redW: 0.1},
+  medium:{speed:0.005,hits:5,chance:0.3,size:64, greenW: 0.2, redW: 0.2},
+  heavy:{speed:0.008,hits:7,chance:0.15,size:78, greenW: 0.1, redW: 0.1},
+  legend:{speed:0.013,hits:10,chance:0.05,size:90, greenW: 0.05, redW: 0.3}
+};
+
+// ---------- ESTADO DE JUEGO ----------
+let fishes=[];
+let bubbles=[]; 
+let maxFishes=15; 
+let state="idle"; 
+let targetFish=null;
+let fishCount=0;
+let fishRecord = localStorage.getItem('fishRecord') ? parseInt(localStorage.getItem('fishRecord')) : 0; 
+let catchAnim = { active: false, scale: 0, fish: null, timer: 0 }; 
+
+let linePos=0, lineDir=1, speed=0, progress=0, needed=0;
+
+const minLureY = 100; 
+let maxLureY = canvas.height - 80; 
+
+let lureTargetY = maxLureY; 
+let currentLureY = maxLureY; 
+let lureTargetX = canvas.width/2; 
+let currentLureX = canvas.width/2; 
+let fishReelY = maxLureY; 
+let fishReelX = canvas.width/2; 
+let chargeStartTime = 0;
+const maxCastTime = 2000; 
+let nextBiteTime = 0; 
+
+function setNewBiteTimer() {
+  const randomDelay = Math.random() * 15000 + 5000; 
+  nextBiteTime = Date.now() + randomDelay;
+}
+
+// ---------- BURBUJAS ----------
+function createBubble(x, y, isTrail = false) {
+    return {
+        x: x || Math.random() * canvas.width,
+        y: y || canvas.height + 10,
+        size: isTrail ? Math.random() * 3 + 1 : Math.random() * 5 + 2,
+        speed: isTrail ? Math.random() * 1 + 0.5 : Math.random() * 1 + 0.5,
+        alpha: isTrail ? 0.6 : Math.random() * 0.3 + 0.1,
+        isTrail: isTrail
+    };
+}
+
+// ---------- PECES Y GRUPOS ----------
+function pickRarity(){
+  let r=Math.random(), acc=0;
+  for(const k in rarities){
+    acc+=rarities[k].chance;
+    if(r<=acc) return k;
+  }
+  return "small";
+}
+
+function checkSpacing(x, y, minDistance) {
+    for(let f of fishes) {
+        let dx = f.x - x;
+        let dy = f.y - y;
+        if(Math.hypot(dx, dy) < minDistance) return false;
+    }
+    return true;
+}
+
+function generateFishData(forcedRarity = null, leader = null) {
+  const rarity = forcedRarity || pickRarity();
+  const baseSize = rarities[rarity].size;
+  const depth = leader ? leader.depth : Math.random();
+  const hitBoxRadius = baseSize * 0.4;
+  
+  let x, y, vx, vy;
+  
+  if (leader) {
+      const offsetX = (Math.random() * 60 + 40) * (leader.vx > 0 ? -1 : 1);
+      const offsetY = Math.random() * 40 - 20;
+      x = leader.x + offsetX;
+      y = leader.y + offsetY;
+      vx = leader.vx;
+      vy = leader.vy;
+  } else {
+      let safePositionFound = false;
+      let attempts = 0;
+      
+      while(!safePositionFound && attempts < 10) {
+          const edge = Math.floor(Math.random() * 4);
+          switch(edge) {
+            case 0: x = -baseSize; y = Math.random() * (canvas.height - 200) + 100; vx = Math.random() * 0.4 + 0.1; vy = Math.random() * 0.4 - 0.2; break;
+            case 1: x = canvas.width + baseSize; y = Math.random() * (canvas.height - 200) + 100; vx = -(Math.random() * 0.4 + 0.1); vy = Math.random() * 0.4 - 0.2; break;
+            case 2: x = Math.random() * canvas.width; y = -baseSize; vx = Math.random() * 0.4 - 0.2; vy = Math.random() * 0.4 + 0.1; break;
+            case 3: x = Math.random() * canvas.width; y = canvas.height + baseSize; vx = Math.random() * 0.4 - 0.2; vy = -(Math.random() * 0.4 + 0.1); break;
+          }
+          if (checkSpacing(x, y, baseSize)) safePositionFound = true;
+          attempts++;
+      }
+  }
+
+  const speedModifier = 1 - depth * 0.3;
+  vx *= speedModifier;
+  vy *= speedModifier;
+  
+  let selectedSprite;
+  let isMiraDerecha = false;
+
+  if (leader) {
+      selectedSprite = leader.sprite;
+      isMiraDerecha = leader.isMiraDerecha;
+  } else {
+      const allSprites = [
+        ...(fishSprites.miraIzquierda[rarity] || []), 
+        ...(fishSprites.miraDerecha[rarity] || [])
+      ];
+      selectedSprite = rarity === "legend" ? null : allSprites[Math.floor(Math.random() * allSprites.length)];
+      isMiraDerecha = (selectedSprite && selectedSprite.src.includes("pezchico1.png"));
+  }
+  
+  let initialFlip;
+  if (isMiraDerecha) initialFlip = vx < 0; 
+  else initialFlip = vx > 0;
+
+  // AJUSTE: Opacidad reducida 40% - 70%
+  const opacity = leader ? leader.opacity : (Math.random() * 0.3 + 0.4);
+
+  return {
+    x, y, vx, vy, rarity, depth, sprite: selectedSprite, flip: initialFlip, isMiraDerecha,
+    opacity: opacity,
+    hitBoxRadius: hitBoxRadius,
+    nextDirectionChangeAttempt: Date.now() + (Math.random() * 5000 + 5000),
+    biteSoundPlayed: false,
+    isScared: false,
+    scareTimer: 0
+  };
+}
+
+function spawnFishGroup() {
+    if (Math.random() < 0.2 && fishes.length < maxFishes - 4) {
+        const leader = generateFishData();
+        fishes.push(leader);
+        const followersCount = Math.floor(Math.random() * 3) + 2; 
+        for(let i=0; i<followersCount; i++) {
+            fishes.push(generateFishData(leader.rarity, leader));
+        }
+    } else {
+        fishes.push(generateFishData());
+    }
+}
+
+function spawnInitial(){
+  fishes=[];
+  if (assetsLoaded) {
+      for(let i=0;i<8;i++) spawnFishGroup();
+  }
+}
+
+// AJUSTE: Susto Realista (Radio + Comportamiento Variado)
+function scareFishes(sourceX, sourceY) {
+    const scareRadius = 250; 
+    fishes.forEach(f => {
+        if(f === targetFish) return;
+
+        let dx = f.x - sourceX;
+        let dy = f.y - sourceY;
+        let dist = Math.hypot(dx, dy);
+        
+        if(dist < scareRadius) {
+            if(dist === 0) { dx=1; dist=1; }
+
+            f.isScared = true;
+            // 50% Pánico total, 50% Cautela
+            const panicMode = Math.random() < 0.5;
+            
+            f.scareTimer = Date.now() + (panicMode ? 2500 : 1200); 
+
+            const dirX = dx / dist;
+            const dirY = dy / dist;
+
+            if(panicMode) {
+                f.vx = dirX * 3.5;
+                f.vy = dirY * 3.5;
+            } else {
+                f.vx = dirX * 1.5;
+                f.vy = dirY * 1.5;
+            }
+        }
+    });
+}
+
+// ---------- INPUT ----------
+let releaseX = canvas.width/2; 
+const rodHeight = 200;
+const rodDrawY = canvas.height - rodHeight + 30; 
+const rodTipY = rodDrawY; 
+maxLureY = rodTipY; 
+currentLureY = maxLureY; 
+
+canvas.addEventListener("pointerdown",(e)=>{
+  if(menu.style.display!=="none" || catchAnim.active) return; 
+
+  if(state==="idle"){
+    state="charging";
+    chargeStartTime = Date.now();
+  }
+  else if(state==="bite") startReel();
+  else if(state==="reel") reelClick();
+});
+
+canvas.addEventListener("pointermove",(e)=>{
+    releaseX = e.clientX;
+});
+
+canvas.addEventListener("pointerup",(e)=>{
+  if(state==="charging"){
+    const chargeTime = Date.now() - chargeStartTime;
+    const normalizedCharge = Math.min(chargeTime, maxCastTime) / maxCastTime;
+    
+    lureTargetY = maxLureY - (maxLureY - minLureY) * normalizedCharge;
+    if(lureTargetY > maxLureY) lureTargetY = maxLureY;
+    lureTargetX = e.clientX; 
+
+    currentLureY = maxLureY; 
+    currentLureX = canvas.width/2; 
+    
+    playSound('cast');
+    state = "waiting"; 
+    nextBiteTime = 0; 
+    
+    setTimeout(() => {
+        scareFishes(lureTargetX, lureTargetY);
+    }, 500); 
+  }
+});
+
+document.getElementById("playBtn").onclick=()=>{
+  menu.style.display="none";
+  if (!isMuted && isBgmOn) {
+      audioBGM.play().catch(e => console.warn("Interacción requerida"));
+  }
+};
+
+// ---------- LOOP ----------
+
+function loop(){
+  if (!isLooping) isLooping = true;
+  
+  try { 
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    if(fishes.length<maxFishes && Math.random()<0.003){ 
+      spawnFishGroup();
+    }
+    
+    if(Math.random() < 0.05) bubbles.push(createBubble());
+
+    for (let i = bubbles.length - 1; i >= 0; i--) {
+        let b = bubbles[i];
+        b.y -= b.speed;
+        b.x += Math.sin(Date.now() * 0.005 + b.y * 0.01) * 0.5; 
+        
+        ctx.fillStyle = `rgba(255, 255, 255, ${b.alpha})`;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
+        ctx.fill();
+
+        if (b.y < -10) bubbles.splice(i, 1);
+    }
+
+    const margin = 100;
+    fishes = fishes.filter(f => 
+      f.x > -margin && 
+      f.x < canvas.width + margin && 
+      f.y > -margin && 
+      f.y < canvas.height + margin
+    );
+
+    if (state === "waiting") {
+      const lureSpeed = 0.05; 
+      
+      const isYFinished = Math.abs(currentLureY - lureTargetY) <= 1;
+      const isXFinished = Math.abs(currentLureX - lureTargetX) <= 1;
+
+      if (!isYFinished) currentLureY += (lureTargetY - currentLureY) * lureSpeed;
+      else currentLureY = lureTargetY;
+
+      if (!isXFinished) currentLureX += (lureTargetX - currentLureX) * lureSpeed;
+      else currentLureX = lureTargetX;
+
+      if (isYFinished && isXFinished) {
+          if (nextBiteTime === 0) setNewBiteTimer();
+
+          if (Date.now() >= nextBiteTime) {
+              const lureX = currentLureX;
+              const lureY = currentLureY; 
+              let closestFish = null;
+              let minDistance = Infinity;
+
+              fishes.forEach(f => {
+                  if(f.isScared) return; 
+
+                  const dx = f.x - lureX;
+                  const dy = f.y - lureY;
+                  const dist = Math.hypot(dx, dy);
+                  
+                  if (dist < 150 && dist < minDistance) {
+                      minDistance = dist;
+                      closestFish = f;
+                  }
+              });
+
+              if (closestFish) {
+                  targetFish = closestFish;
+                  targetFish.biteSoundPlayed = false; 
+                  state = "bite";
+                  scareFishes(currentLureX, currentLureY);
+              } else {
+                  nextBiteTime = Date.now() + 2000;
+              }
+          }
+      }
+    }
+
+    fishes.sort((a,b)=>b.depth-a.depth);
+    
+    for (let i = fishes.length - 1; i >= 0; i--) {
+      const f = fishes[i];
+      try {
+          if (!isFinite(f.x) || !isFinite(f.y)) { fishes.splice(i, 1); continue; }
+          updateFish(f);
+          drawFish(f);
+      } catch(e) {
+          console.error("Error pez", e);
+          fishes.splice(i, 1);
+      }
+    }
+
+    drawRod();
+    drawUI();
+    if(state==="reel") updateReel();
+    if (catchAnim.active) drawCatchAnim();
+    
+  } catch(e) {
+    console.error("CRASH PREVENIDO:", e);
+  } 
+
+  requestAnimationFrame(loop);
+}
+
+function updateFish(f){
+  if(f.isScared) {
+      f.x += f.vx;
+      f.y += f.vy;
+
+      if(Math.random() < 0.3) {
+          bubbles.push(createBubble(f.x, f.y, true));
+      }
+
+      if (f.isMiraDerecha) f.flip = f.vx < 0; 
+      else f.flip = f.vx > 0;
+
+      if(Date.now() > f.scareTimer) {
+          f.isScared = false;
+          f.vx *= 0.2; 
+          f.vy *= 0.2;
+          
+          if(Math.random() < 0.5) { 
+              f.vx *= -1; 
+              f.vy *= -1;
+          }
+      }
+      return; 
+  }
+
+  if(state==="bite" && f===targetFish){
+    const lureX = currentLureX;
+    const lureY = currentLureY; 
+    
+    const dx = lureX - f.x;
+    const dy = lureY - f.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist < 30 && !f.biteSoundPlayed) {
+        playSound('bite');
+        f.biteSoundPlayed = true;
+    }
+
+    f.x+=(lureX - f.x)*0.05; 
+    f.y+=(lureY - f.y)*0.05; 
+    
+    if (f.isMiraDerecha) f.flip = lureX < f.x; 
+    else f.flip = lureX > f.x;
+  }
+  else if(state==="reel" && f===targetFish){
+    const reelSpeed = 0.05; 
+    const jitterX = Math.sin(Date.now()*0.02)*1.5;
+    const jitterY = Math.cos(Date.now()*0.025)*1.2;
+    f.x += (fishReelX - f.x) * reelSpeed + jitterX;
+    f.y += (fishReelY - f.y) * reelSpeed + jitterY;
+  }
+  else{
+    f.x+=f.vx;
+    f.y+=f.vy;
+    
+    if (f.isMiraDerecha) f.flip = f.vx < 0; 
+    else f.flip = f.vx > 0;
+
+    if (Date.now() > f.nextDirectionChangeAttempt) {
+        if (Math.random() < 0.4) { 
+            f.vx *= -1; 
+            f.vy = Math.random() * 0.4 - 0.2; 
+        }
+        f.nextDirectionChangeAttempt = Date.now() + (Math.random() * 5000 + 5000); 
+    }
+  }
+}
+
+// ---------- REEL ----------
+function startReel(){
+  state="reel";
+  linePos=0;
+  lineDir=1;
+  progress=0;
+  
+  const rarityData = rarities[targetFish.rarity];
+  speed = rarityData.speed;
+
+  const castRange = maxLureY - minLureY;
+  const castDepth = Math.max(0, maxLureY - lureTargetY);
+  const normalizedDepth = castDepth / castRange; 
+
+  const minHits = 3;
+  const maxHits = 10;
+  needed = minHits + Math.ceil((maxHits - minHits) * normalizedDepth);
+  needed = Math.max(minHits, needed); 
+  
+  fishReelY = currentLureY; 
+  fishReelX = currentLureX; 
+  targetFish.x = fishReelX;
+  targetFish.y = fishReelY;
+
+  if (!isMuted && isSfxOn) { 
+      if (audioReel) audioReel.pause(); 
+      audioReel = new Audio(sfx.cast);
+      audioReel.loop = true;
+      audioReel.volume = 1.0;
+      audioReel.load();
+      audioReel.play().catch(e => console.error(e));
+  }
+}
+
+function updateReel(){
+  linePos+=speed*lineDir;
+  if(linePos>=1||linePos<=0) lineDir*=-1;
+
+  const x=canvas.width/2-150, y=20, w=300;
+  const rarityData = rarities[targetFish.rarity];
+
+  const greenW = rarityData.greenW * w; 
+  const redW = rarityData.redW * w; 
+  const center = x + w * 0.5;
+
+  ctx.fillStyle="#222";
+  ctx.fillRect(x,y,w,18);
+
+  ctx.fillStyle="#2ecc71";
+  const greenStartX = center - greenW / 2;
+  ctx.fillRect(greenStartX, y, greenW, 18);
+  
+  ctx.fillStyle="#e74c3c";
+  ctx.fillRect(x, y, redW, 18); 
+  ctx.fillRect(x + w - redW, y, redW, 18); 
+    
+  ctx.fillStyle="#fff";
+  ctx.fillRect(x+linePos*w-2,y-6,4,30);
+  ctx.fillText(`Progreso ${progress}/${needed}`,x,y+40);
+}
+
+function reelClick(){
+  const rarityData = rarities[targetFish.rarity];
+  const greenW = rarityData.greenW; 
+  const redW = rarityData.redW; 
+  const center = 0.5;
+  const greenMin = center - greenW / 2;
+  const greenMax = center + greenW / 2;
+  
+  if(linePos >= greenMin && linePos <= greenMax){
+    progress++;
+    if (progress < needed) {
+        const targetRodY = maxLureY; 
+        const totalDistanceY = lureTargetY - targetRodY;
+        fishReelY = lureTargetY - (totalDistanceY * (progress / needed));
+        
+        const targetRodX = canvas.width/2;
+        const totalDistanceX = lureTargetX - targetRodX;
+        fishReelX = lureTargetX - (totalDistanceX * (progress / needed));
+        
+    } else {
+        catchFish();
+    }
+  }
+  else if(linePos <= redW || linePos >= (1.0 - redW)) {
+      playSound('escape');
+      reset(); 
+  }
+}
+
+// ---------- RESULTADOS ----------
+function catchFish(){
+  playSound('escape'); 
+  fishCount++;
+  if (fishCount > fishRecord) {
+      fishRecord = fishCount;
+      localStorage.setItem('fishRecord', fishRecord);
+  }
+
+  catchAnim.active = true;
+  catchAnim.fish = targetFish; 
+  catchAnim.scale = 0.1;
+  catchAnim.timer = 0;
+
+  fishes.splice(fishes.indexOf(targetFish),1);
+  reset();
+  
+  setTimeout(() => {
+      catchAnim.active = false;
+      catchAnim.fish = null;
+  }, 1500);
+}
+
+function reset(){
+  state="idle";
+  targetFish=null;
+  lureTargetY = maxLureY;
+  currentLureY = maxLureY; 
+  lureTargetX = canvas.width/2; 
+  currentLureX = canvas.width/2; 
+  fishReelY = maxLureY; 
+  fishReelX = canvas.width/2; 
+  nextBiteTime = 0;
+  stopReelSound();
+}
+
+// ---------- DIBUJO ----------
+function drawFish(f){
+  if (!f.sprite && f.rarity !== "legend") return; 
+
+  const base=rarities[f.rarity].size;
+  const scale=1-f.depth*0.25;
+  const size=base*scale;
+  
+  const alpha= f.opacity; 
+
+  ctx.fillStyle=`rgba(0,0,0,${0.2})`;
+  ctx.beginPath();
+  ctx.ellipse(f.x,f.y+size*0.35,size*0.45,size*0.18,0,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.save();
+  ctx.globalAlpha=alpha;
+  ctx.translate(f.x,f.y);
+  if(f.flip) ctx.scale(-1,1); 
+
+  if(f.rarity==="legend"){
+    ctx.font=`${size}px serif`;
+    ctx.fillText("🐋",-size/2,size/2);
+  }else{
+    ctx.drawImage(f.sprite,-size/2,-size/2,size,size);
+  }
+  ctx.restore();
+}
+
+function drawCatchAnim() {
+    if(!catchAnim.fish) return;
+    
+    const f = catchAnim.fish;
+    catchAnim.scale += 0.05;
+    if(catchAnim.scale > 1.5) catchAnim.scale = 1.5;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(0,0,canvas.width, canvas.height);
+    
+    const cx = canvas.width/2;
+    const cy = canvas.height/2;
+    const grad = ctx.createRadialGradient(cx, cy, 50, cx, cy, 300);
+    grad.addColorStop(0, "rgba(255, 255, 200, 0.8)");
+    grad.addColorStop(1, "rgba(255, 255, 200, 0)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 300, 0, Math.PI*2);
+    ctx.fill();
+
+    const size = 200 * catchAnim.scale;
+    ctx.translate(cx, cy);
+    ctx.rotate(Math.sin(Date.now()*0.01)*0.2);
+    
+    if(f.rarity === "legend"){
+        ctx.font=`${size}px serif`;
+        ctx.fillText("🐋",-size/2,size/2);
+    } else if(f.sprite) {
+        ctx.drawImage(f.sprite, -size/2, -size/2, size, size);
+    }
+    
+    ctx.fillStyle = "#fff";
+    ctx.shadowColor = "black";
+    ctx.shadowBlur = 10;
+    ctx.font = "bold 40px Fredoka";
+    ctx.textAlign = "center";
+    ctx.fillText("¡CAPTURADO!", 0, size/2 + 60);
+
+    ctx.restore();
+}
+
+function drawRod(){
+  const rodWidth = 100;
+  const rodHeight = 200;
+  const rodDrawX = canvas.width/2 - rodWidth/2 + 20; 
+  
+  ctx.save();
+  ctx.drawImage(rodSprite, rodDrawX, rodDrawY, rodWidth, rodHeight);
+  ctx.restore();
+
+  const rodLineStartX = rodDrawX + rodWidth / 2; 
+  const rodLineStartY = rodDrawY; 
+
+  if(state !== "idle" && state !== "charging"){
+    ctx.strokeStyle="#000"; 
+    ctx.lineWidth = 1; 
+    ctx.beginPath();
+    ctx.moveTo(rodLineStartX, rodLineStartY); 
+
+    let lureX = currentLureX;
+    let lureY = currentLureY; 
+
+    if (state === "reel" && targetFish) {
+      lureX = targetFish.x;
+      lureY = targetFish.y;
+    }
+    
+    ctx.lineTo(lureX, lureY);
+    ctx.stroke();
+    
+    if(state === "waiting" || (state === "reel" && targetFish === null)){
+        ctx.fillStyle="#C0C0C0"; 
+        ctx.beginPath();
+        ctx.arc(lureX, lureY, 3, 0, Math.PI * 2); 
+        ctx.fill();
+    }
+  }
+}
+
+function drawUI(){
+  ctx.fillStyle="#fff";
+  ctx.font="16px Fredoka";
+  ctx.fillText(`Peces: ${fishCount}`,10,20);
+  ctx.fillText(`Récord: ${fishRecord}`,10,40); 
+  
+  if(state==="idle") {
+    ctx.fillText("Toca y mantén para lanzar la caña",canvas.width/2-110,canvas.height/2);
+  }
+  if(state==="bite") {
+    ctx.fillText("¡Pica! Toca!",canvas.width/2-40,canvas.height/2);
+  }
+
+  if(state==="charging"){
+    const chargeTime = Date.now() - chargeStartTime;
+    const normalizedCharge = Math.min(chargeTime, maxCastTime) / maxCastTime;
+    const barWidth = 150;
+    const barX = canvas.width/2 - barWidth/2;
+    const barY = canvas.height - 40;
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.fillRect(barX, barY, barWidth, 10);
+    
+    ctx.fillStyle = "#2ecc71";
+    ctx.fillRect(barX, barY, barWidth * normalizedCharge, 10);
+
+    ctx.fillStyle="#fff";
+    ctx.fillText("Cargando...", canvas.width/2 - 40, canvas.height/2 + 30);
+  }
+}
+
+checkAssetsLoading();
+</script>
+</body>
+</html>
