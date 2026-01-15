@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Relax Fishing</title>
 
-<meta property="og:title" content="Relax Fishing - v1.1">
+<meta property="og:title" content="Relax Fishing - v1.2">
 <meta property="og:description" content="¡Relájate pescando en este divertido simulador de pesca! 🎣">
-<meta property="og:image" content="https://i.postimg.cc/nVPfcJFB/previsualizacion.jpg">
+<meta property="og:image" content="sprites/recursos/previsualizacion.jpg">
 <meta property="og:type" content="website">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://i.postimg.cc/nVPfcJFB/previsualizacion.jpg">
-<link rel="apple-touch-icon" href="https://i.postimg.cc/02vB0d53/icono.jpg">
-<link rel="icon" href="https://i.postimg.cc/02vB0d53/icono.jpg">
+<meta name="twitter:image" content="sprites/recursos/previsualizacion.jpg">
+<link rel="apple-touch-icon" href="sprites/recursos/icono.jpg">
+<link rel="icon" href="sprites/recursos/icono.jpg">
 
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
 
@@ -30,7 +30,8 @@ html, body {
 
 canvas {
   display: block;
-  background-image: url("https://i.postimg.cc/mDq0KMyw/aguaanimada.gif");
+  /* Fondo actualizado */
+  background-image: url("sprites/recursos/aguaanimada.gif");
   background-size: cover;
   background-position: center;
 }
@@ -177,7 +178,7 @@ canvas {
 
 <div id="menu">
   <img 
-  src="https://i.postimg.cc/FK59FQxn/titulo.png" 
+  src="sprites/recursos/titulo.jpg" 
   alt="Relax Fishing"
   id="titleImage"
 />
@@ -223,7 +224,7 @@ canvas {
         <button class="close-btn" onclick="document.getElementById('aboutModal').style.display='none';">X</button>
         <h3>ℹ️ Acerca de Relax Fishing</h3>
         <p>Creado por DX GAMES</p>
-        <p>Versión: v1.1</p>
+        <p>Versión: v1.2</p>
     </div>
 </div>
 
@@ -282,17 +283,24 @@ function checkAssetsLoading() {
     }
 }
 
-// ---------- AUDIO ----------
-const audioBGM = new Audio("https://archive.org/download/agua-de-rio-fluyendo/Agua%20de%20R%C3%ADo%20Fluyendo.mp3");
+// ---------- AUDIO ACTUALIZADO ----------
+// Sonido ambiental
+const audioBGM = new Audio("audio/agua.mp3");
 audioBGM.loop = true;
 audioBGM.volume = 0.5;
 
 let audioReel = null; 
 
+// Mapeo de efectos de sonido
 const sfx = {
-    cast: "https://archive.org/download/efecto-de-sonido-de-cana-de-pescar/Efecto%20de%20sonido%20de%20Ca%C3%b1a%20de%20pescar.mp3",
-    bite: "https://archive.org/download/sonido-de-chapoteo-con-roca-en-el-lago-efecto-de-sonido-hd/Sonido%20de%20Chapoteo%20con%20Roca%20en%20el%20lago%20%20Efecto%20de%20Sonido%20HD.mp3",
-    escape: "https://archive.org/download/water-splash-sound-effect-free-clip-sounds-ambient-sounds/Water%20Splash%20Sound%20Effect%20%20Free%20Clip%20Sounds%20%20Ambient%20Sounds.mp3"
+    // Sonido de la caña de pescar en el minijuego de pesca
+    cast: "audio/pescando.mp3", 
+    
+    // Sonido de cuando la caña cae al agua (usado en bite/pique)
+    bite: "audio/splash.mp3", 
+    
+    // Sonido del pez cuando escapa y cuando es capturado
+    escape: "audio/chapoteo.mp3" 
 };
 
 let isMuted = false;
@@ -368,45 +376,40 @@ howToPlayBtn.onclick = () => { howToPlayModal.style.display = 'flex'; };
 aboutBtn.onclick = () => { aboutModal.style.display = 'flex'; };
 
 
-// ---------- SPRITES ACTUALIZADOS ----------
-// Caña (Nuevo path)
+// ---------- SPRITES ----------
 const rodSprite = img("sprites/caña/caña.png");
 
-// Base de datos de Peces con sus rutas y hacia dónde miran por defecto
-// D = Derecha, I = Izquierda
-// Type: trap = piraña (resta puntos)
+// DB de Peces (Sin cambios, solo se mantiene lo corregido anteriormente)
 const FISH_DB = {
-    small: [ // CHICOS (Comunes)
+    small: [ 
         { src: 'sprites/peces/chicos/betta.png', facing: 'D' },
         { src: 'sprites/peces/chicos/pezdorado.png', facing: 'D' },
         { src: 'sprites/peces/chicos/pezpayaso.png', facing: 'D' },
         { src: 'sprites/peces/chicos/sardina.png', facing: 'D' },
         { src: 'sprites/peces/chicos/tetraneon.png', facing: 'D' },
-        // Piraña agregada aquí por ser "Común" en probabilidad, aunque venga de carpeta especiales
         { src: 'sprites/peces/especiales/piraña.png', facing: 'I', type: 'trap' }
     ],
-    medium: [ // MEDIANOS (Raros)
+    medium: [ 
         { src: 'sprites/peces/medianos/bagre.png', facing: 'D' },
         { src: 'sprites/peces/medianos/koi.png', facing: 'I' },
         { src: 'sprites/peces/medianos/lobina.png', facing: 'D' },
         { src: 'sprites/peces/medianos/pargo.png', facing: 'D' },
         { src: 'sprites/peces/medianos/trucha.png', facing: 'D' }
     ],
-    heavy: [ // GRANDES (Épicos)
+    heavy: [ 
         { src: 'sprites/peces/grandes/atun.png', facing: 'I' },
         { src: 'sprites/peces/grandes/barracuda.png', facing: 'D' },
         { src: 'sprites/peces/grandes/mahimahi.png', facing: 'I' },
         { src: 'sprites/peces/grandes/mero.png', facing: 'D' },
         { src: 'sprites/peces/grandes/salmon.png', facing: 'D' }
     ],
-    legend: [ // ESPECIALES (Legendarios / Míticos)
+    legend: [ 
         { src: 'sprites/peces/especiales/ballena.png', facing: 'D' },
         { src: 'sprites/peces/especiales/calamar.png', facing: 'I' },
         { src: 'sprites/peces/especiales/mantarraya.png', facing: 'I' }
     ]
 };
 
-// Cargar las imágenes
 for(let cat in FISH_DB) {
     FISH_DB[cat].forEach(fish => {
         fish.imgObj = img(fish.src);
@@ -522,14 +525,10 @@ function generateFishData(forcedRarity = null, leader = null) {
   if (leader) {
       selectedData = leader.def;
   } else {
-      // Elegir pez aleatorio de la DB según rareza
       const pool = FISH_DB[rarity] || FISH_DB['small'];
       selectedData = pool[Math.floor(Math.random() * pool.length)];
   }
   
-  // Lógica de Flip basada en la orientación por defecto (D o I)
-  // Si vx < 0 (va izquierda) y mira Derecha (D) -> Flip
-  // Si vx > 0 (va derecha) y mira Izquierda (I) -> Flip
   let flip = false;
   if (vx < 0 && selectedData.facing === 'D') flip = true;
   if (vx > 0 && selectedData.facing === 'I') flip = true;
@@ -538,7 +537,7 @@ function generateFishData(forcedRarity = null, leader = null) {
 
   return {
     x, y, vx, vy, rarity, depth, 
-    def: selectedData, // Guardamos la definición completa
+    def: selectedData, 
     flip: flip,
     opacity: opacity,
     hitBoxRadius: hitBoxRadius,
@@ -767,7 +766,6 @@ function updateFish(f){
           bubbles.push(createBubble(f.x, f.y, true));
       }
 
-      // Actualizar flip en susto
       if (f.vx < 0 && f.def.facing === 'D') f.flip = true;
       else if (f.vx > 0 && f.def.facing === 'I') f.flip = true;
       else f.flip = false;
@@ -801,7 +799,6 @@ function updateFish(f){
     f.x+=(lureX - f.x)*0.05; 
     f.y+=(lureY - f.y)*0.05; 
     
-    // Mirar al anzuelo
     const lookDir = lureX - f.x;
     if (lookDir < 0 && f.def.facing === 'D') f.flip = true;
     else if (lookDir > 0 && f.def.facing === 'I') f.flip = true;
@@ -818,7 +815,6 @@ function updateFish(f){
     f.x+=f.vx;
     f.y+=f.vy;
     
-    // Flip normal
     if (f.vx < 0 && f.def.facing === 'D') f.flip = true;
     else if (f.vx > 0 && f.def.facing === 'I') f.flip = true;
     else f.flip = false;
@@ -923,13 +919,12 @@ function reelClick(){
   }
 }
 
-// ---------- RESULTADOS (Mecánica Piraña) ----------
+// ---------- RESULTADOS ----------
 function catchFish(){
   playSound('escape'); 
   
-  // Lógica de Puntos
   if (targetFish.def.type === 'trap') {
-      fishCount--; // Piraña resta
+      fishCount--; 
       if (fishCount < 0) fishCount = 0;
   } else {
       fishCount++;
@@ -974,10 +969,8 @@ function drawFish(f){
   const base=rarities[f.rarity].size;
   const scale=1-f.depth*0.25;
   const size=base*scale;
-  
   const alpha= f.opacity; 
 
-  // Sombra
   ctx.fillStyle=`rgba(0,0,0,${0.2})`;
   ctx.beginPath();
   ctx.ellipse(f.x,f.y+size*0.35,size*0.45,size*0.18,0,0,Math.PI*2);
@@ -987,10 +980,8 @@ function drawFish(f){
   ctx.globalAlpha=alpha;
   ctx.translate(f.x,f.y);
   
-  // Aplicar flip calculado
   if(f.flip) ctx.scale(-1,1); 
 
-  // Dibujar imagen (Ahora legendarios también usan imagen)
   ctx.drawImage(f.def.imgObj,-size/2,-size/2,size,size);
   
   ctx.restore();
@@ -1021,7 +1012,6 @@ function drawCatchAnim() {
     ctx.translate(cx, cy);
     ctx.rotate(Math.sin(Date.now()*0.01)*0.2);
     
-    // Dibujo imagen en anim
     if(f.def.imgObj) {
         ctx.drawImage(f.def.imgObj, -size/2, -size/2, size, size);
     }
