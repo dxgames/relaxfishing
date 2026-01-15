@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Relax Fishing</title>
 
-<meta property="og:title" content="Relax Fishing - v1.0">
+<meta property="og:title" content="Relax Fishing - v1.1">
 <meta property="og:description" content="¡Relájate pescando en este divertido simulador de pesca! 🎣">
 <meta property="og:image" content="https://i.postimg.cc/nVPfcJFB/previsualizacion.jpg">
 <meta property="og:type" content="website">
@@ -14,7 +14,6 @@
 <meta name="twitter:image" content="https://i.postimg.cc/nVPfcJFB/previsualizacion.jpg">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/02vB0d53/icono.jpg">
 <link rel="icon" href="https://i.postimg.cc/02vB0d53/icono.jpg">
-
 
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
 
@@ -26,7 +25,7 @@ html, body {
   background: #000;
   user-select: none;
   font-family: 'Fredoka', sans-serif;
-  -webkit-tap-highlight-color: transparent; /* Quita el brillo azul al tocar en móviles */
+  -webkit-tap-highlight-color: transparent;
 }
 
 canvas {
@@ -182,7 +181,7 @@ canvas {
   alt="Relax Fishing"
   id="titleImage"
 />
-  <button id="playBtn" class="menu-button">¡A PEZCAR!</button>
+  <button id="playBtn" class="menu-button">¡A PESCAR!</button>
   <button id="settingsBtn" class="menu-button option-button">Ajustes</button> 
   <button id="howToPlayBtn" class="menu-button option-button">¿Cómo Jugar?</button>
   <button id="aboutBtn" class="menu-button option-button">Acerca de</button>
@@ -214,6 +213,7 @@ canvas {
         <p>¡Bienvenido a una experiencia relajante en este simulador de pesca!</p>
         <p>Para comenzar a pescar toca la pantalla en la dirección en la que quieres lanzar el sedal y mantenla presionada para controlar la fuerza del lanzamiento. Cuando lances el sedal espera a que un pez pique el anzuelo.</p>
         <p>Cuando pique, toca la pantalla, luego toca las veces necesarias en la **zona color verde** de la barra que aparece en la parte superior hasta capturar al pez. ¡Si tocas la zona roja el pez escapará!</p>
+        <p><strong>Cuidado con la Piraña:</strong> ¡Te quitará puntos!</p>
         <p>¡Diviértete!</p>
     </div>
 </div>
@@ -223,7 +223,7 @@ canvas {
         <button class="close-btn" onclick="document.getElementById('aboutModal').style.display='none';">X</button>
         <h3>ℹ️ Acerca de Relax Fishing</h3>
         <p>Creado por DX GAMES</p>
-        <p>Versión: v1.0 Final</p>
+        <p>Versión: v1.1</p>
     </div>
 </div>
 
@@ -267,7 +267,7 @@ function img(src){
     };
     i.onerror = () => {
         console.error(`Error al cargar imagen: ${src}`);
-        imagesLoaded++;
+        imagesLoaded++; // Contar como cargado para no bloquear
         checkAssetsLoading();
     }
     i.src=src; 
@@ -368,36 +368,50 @@ howToPlayBtn.onclick = () => { howToPlayModal.style.display = 'flex'; };
 aboutBtn.onclick = () => { aboutModal.style.display = 'flex'; };
 
 
-// ---------- SPRITES ----------
-const rodSprite = img("https://i.postimg.cc/vHgJjVtz/caña.png");
+// ---------- SPRITES ACTUALIZADOS ----------
+// Caña (Nuevo path)
+const rodSprite = img("sprites/caña/caña.png");
 
-const fishSprites = {
-  miraIzquierda: {
-    small:[
-      img("https://i.postimg.cc/BbtdVt03/pezchico2.png"),
-      img("https://i.postimg.cc/NMd3DmZS/pezchico3.png"),
-      img("https://i.postimg.cc/d15b6rzD/pezchico4.png"),
-      img("https://i.postimg.cc/6qTDmTXw/pezchico5.png")
+// Base de datos de Peces con sus rutas y hacia dónde miran por defecto
+// D = Derecha, I = Izquierda
+// Type: trap = piraña (resta puntos)
+const FISH_DB = {
+    small: [ // CHICOS (Comunes)
+        { src: 'sprites/peces/chicos/betta.png', facing: 'D' },
+        { src: 'sprites/peces/chicos/pezdorado.png', facing: 'D' },
+        { src: 'sprites/peces/chicos/pezpayaso.png', facing: 'D' },
+        { src: 'sprites/peces/chicos/sardina.png', facing: 'D' },
+        { src: 'sprites/peces/chicos/tetraneon.png', facing: 'D' },
+        // Piraña agregada aquí por ser "Común" en probabilidad, aunque venga de carpeta especiales
+        { src: 'sprites/peces/especiales/piraña.png', facing: 'I', type: 'trap' }
     ],
-    medium:[
-      img("https://i.postimg.cc/Jn061g2V/pezmediano1.png"),
-      img("https://i.postimg.cc/MTHPW4rr/pezmediano2.png"),
-      img("https://i.postimg.cc/KzjqZVsW/pezmediano3.png"),
-      img("https://i.postimg.cc/ZRn7TgMh/pezmediano4.png")
+    medium: [ // MEDIANOS (Raros)
+        { src: 'sprites/peces/medianos/bagre.png', facing: 'D' },
+        { src: 'sprites/peces/medianos/koi.png', facing: 'I' },
+        { src: 'sprites/peces/medianos/lobina.png', facing: 'D' },
+        { src: 'sprites/peces/medianos/pargo.png', facing: 'D' },
+        { src: 'sprites/peces/medianos/trucha.png', facing: 'D' }
     ],
-    heavy:[
-      img("https://i.postimg.cc/GpyPqCVs/pezgrande1.png"),
-      img("https://i.postimg.cc/cJn7XS2t/pezgrande2.png")
+    heavy: [ // GRANDES (Épicos)
+        { src: 'sprites/peces/grandes/atun.png', facing: 'I' },
+        { src: 'sprites/peces/grandes/barracuda.png', facing: 'D' },
+        { src: 'sprites/peces/grandes/mahimahi.png', facing: 'I' },
+        { src: 'sprites/peces/grandes/mero.png', facing: 'D' },
+        { src: 'sprites/peces/grandes/salmon.png', facing: 'D' }
+    ],
+    legend: [ // ESPECIALES (Legendarios / Míticos)
+        { src: 'sprites/peces/especiales/ballena.png', facing: 'D' },
+        { src: 'sprites/peces/especiales/calamar.png', facing: 'I' },
+        { src: 'sprites/peces/especiales/mantarraya.png', facing: 'I' }
     ]
-  },
-  miraDerecha: {
-    small:[
-      img("https://i.postimg.cc/6qTDmTXG/pezchico1.png")
-    ],
-    medium:[], 
-    heavy:[] 
-  }
 };
+
+// Cargar las imágenes
+for(let cat in FISH_DB) {
+    FISH_DB[cat].forEach(fish => {
+        fish.imgObj = img(fish.src);
+    });
+}
 
 const rarities = {
   small:{speed:0.0025,hits:3,chance:0.5,size:52, greenW: 0.4, redW: 0.1},
@@ -503,30 +517,29 @@ function generateFishData(forcedRarity = null, leader = null) {
   vx *= speedModifier;
   vy *= speedModifier;
   
-  let selectedSprite;
-  let isMiraDerecha = false;
-
+  // SELECCIÓN DE SPRITE
+  let selectedData;
   if (leader) {
-      selectedSprite = leader.sprite;
-      isMiraDerecha = leader.isMiraDerecha;
+      selectedData = leader.def;
   } else {
-      const allSprites = [
-        ...(fishSprites.miraIzquierda[rarity] || []), 
-        ...(fishSprites.miraDerecha[rarity] || [])
-      ];
-      selectedSprite = rarity === "legend" ? null : allSprites[Math.floor(Math.random() * allSprites.length)];
-      isMiraDerecha = (selectedSprite && selectedSprite.src.includes("pezchico1.png"));
+      // Elegir pez aleatorio de la DB según rareza
+      const pool = FISH_DB[rarity] || FISH_DB['small'];
+      selectedData = pool[Math.floor(Math.random() * pool.length)];
   }
   
-  let initialFlip;
-  if (isMiraDerecha) initialFlip = vx < 0; 
-  else initialFlip = vx > 0;
+  // Lógica de Flip basada en la orientación por defecto (D o I)
+  // Si vx < 0 (va izquierda) y mira Derecha (D) -> Flip
+  // Si vx > 0 (va derecha) y mira Izquierda (I) -> Flip
+  let flip = false;
+  if (vx < 0 && selectedData.facing === 'D') flip = true;
+  if (vx > 0 && selectedData.facing === 'I') flip = true;
 
-  // AJUSTE: Opacidad reducida 40% - 70%
   const opacity = leader ? leader.opacity : (Math.random() * 0.3 + 0.4);
 
   return {
-    x, y, vx, vy, rarity, depth, sprite: selectedSprite, flip: initialFlip, isMiraDerecha,
+    x, y, vx, vy, rarity, depth, 
+    def: selectedData, // Guardamos la definición completa
+    flip: flip,
     opacity: opacity,
     hitBoxRadius: hitBoxRadius,
     nextDirectionChangeAttempt: Date.now() + (Math.random() * 5000 + 5000),
@@ -556,7 +569,6 @@ function spawnInitial(){
   }
 }
 
-// AJUSTE: Susto Realista (Radio + Comportamiento Variado)
 function scareFishes(sourceX, sourceY) {
     const scareRadius = 250; 
     fishes.forEach(f => {
@@ -570,9 +582,7 @@ function scareFishes(sourceX, sourceY) {
             if(dist === 0) { dx=1; dist=1; }
 
             f.isScared = true;
-            // 50% Pánico total, 50% Cautela
             const panicMode = Math.random() < 0.5;
-            
             f.scareTimer = Date.now() + (panicMode ? 2500 : 1200); 
 
             const dirX = dx / dist;
@@ -757,8 +767,10 @@ function updateFish(f){
           bubbles.push(createBubble(f.x, f.y, true));
       }
 
-      if (f.isMiraDerecha) f.flip = f.vx < 0; 
-      else f.flip = f.vx > 0;
+      // Actualizar flip en susto
+      if (f.vx < 0 && f.def.facing === 'D') f.flip = true;
+      else if (f.vx > 0 && f.def.facing === 'I') f.flip = true;
+      else f.flip = false;
 
       if(Date.now() > f.scareTimer) {
           f.isScared = false;
@@ -789,8 +801,11 @@ function updateFish(f){
     f.x+=(lureX - f.x)*0.05; 
     f.y+=(lureY - f.y)*0.05; 
     
-    if (f.isMiraDerecha) f.flip = lureX < f.x; 
-    else f.flip = lureX > f.x;
+    // Mirar al anzuelo
+    const lookDir = lureX - f.x;
+    if (lookDir < 0 && f.def.facing === 'D') f.flip = true;
+    else if (lookDir > 0 && f.def.facing === 'I') f.flip = true;
+    else f.flip = false;
   }
   else if(state==="reel" && f===targetFish){
     const reelSpeed = 0.05; 
@@ -803,8 +818,10 @@ function updateFish(f){
     f.x+=f.vx;
     f.y+=f.vy;
     
-    if (f.isMiraDerecha) f.flip = f.vx < 0; 
-    else f.flip = f.vx > 0;
+    // Flip normal
+    if (f.vx < 0 && f.def.facing === 'D') f.flip = true;
+    else if (f.vx > 0 && f.def.facing === 'I') f.flip = true;
+    else f.flip = false;
 
     if (Date.now() > f.nextDirectionChangeAttempt) {
         if (Math.random() < 0.4) { 
@@ -906,10 +923,18 @@ function reelClick(){
   }
 }
 
-// ---------- RESULTADOS ----------
+// ---------- RESULTADOS (Mecánica Piraña) ----------
 function catchFish(){
   playSound('escape'); 
-  fishCount++;
+  
+  // Lógica de Puntos
+  if (targetFish.def.type === 'trap') {
+      fishCount--; // Piraña resta
+      if (fishCount < 0) fishCount = 0;
+  } else {
+      fishCount++;
+  }
+
   if (fishCount > fishRecord) {
       fishRecord = fishCount;
       localStorage.setItem('fishRecord', fishRecord);
@@ -944,7 +969,7 @@ function reset(){
 
 // ---------- DIBUJO ----------
 function drawFish(f){
-  if (!f.sprite && f.rarity !== "legend") return; 
+  if (!f.def.imgObj) return; 
 
   const base=rarities[f.rarity].size;
   const scale=1-f.depth*0.25;
@@ -952,6 +977,7 @@ function drawFish(f){
   
   const alpha= f.opacity; 
 
+  // Sombra
   ctx.fillStyle=`rgba(0,0,0,${0.2})`;
   ctx.beginPath();
   ctx.ellipse(f.x,f.y+size*0.35,size*0.45,size*0.18,0,0,Math.PI*2);
@@ -960,14 +986,13 @@ function drawFish(f){
   ctx.save();
   ctx.globalAlpha=alpha;
   ctx.translate(f.x,f.y);
+  
+  // Aplicar flip calculado
   if(f.flip) ctx.scale(-1,1); 
 
-  if(f.rarity==="legend"){
-    ctx.font=`${size}px serif`;
-    ctx.fillText("🐋",-size/2,size/2);
-  }else{
-    ctx.drawImage(f.sprite,-size/2,-size/2,size,size);
-  }
+  // Dibujar imagen (Ahora legendarios también usan imagen)
+  ctx.drawImage(f.def.imgObj,-size/2,-size/2,size,size);
+  
   ctx.restore();
 }
 
@@ -996,11 +1021,9 @@ function drawCatchAnim() {
     ctx.translate(cx, cy);
     ctx.rotate(Math.sin(Date.now()*0.01)*0.2);
     
-    if(f.rarity === "legend"){
-        ctx.font=`${size}px serif`;
-        ctx.fillText("🐋",-size/2,size/2);
-    } else if(f.sprite) {
-        ctx.drawImage(f.sprite, -size/2, -size/2, size, size);
+    // Dibujo imagen en anim
+    if(f.def.imgObj) {
+        ctx.drawImage(f.def.imgObj, -size/2, -size/2, size, size);
     }
     
     ctx.fillStyle = "#fff";
@@ -1008,7 +1031,11 @@ function drawCatchAnim() {
     ctx.shadowBlur = 10;
     ctx.font = "bold 40px Fredoka";
     ctx.textAlign = "center";
-    ctx.fillText("¡CAPTURADO!", 0, size/2 + 60);
+    
+    let msg = "¡CAPTURADO!";
+    if (f.def.type === 'trap') msg = "¡OUCH! -1 PTO";
+    
+    ctx.fillText(msg, 0, size/2 + 60);
 
     ctx.restore();
 }
@@ -1084,10 +1111,5 @@ function drawUI(){
 
 checkAssetsLoading();
 </script>
-</body>
-</html>sLoading();
-</script>
-</body>
-</html>t>
 </body>
 </html>
